@@ -8,6 +8,7 @@ const {ObjectID} = require('mongodb');
 var {mongoose} = require('./db/mongoose');
 var {Todo} = require('./models/todo');
 var {User} = require('./models/user');
+var {authenticate} = require('./middleware/authenticate');
 
 var app = express();
 const port = process.env.PORT;
@@ -106,6 +107,27 @@ app.post('/users', (req, res) => {
         res.status(400).send(e);
     });
 });
+
+app.get('/users/me', authenticate, (req, res) => {
+    res.send(req.user);
+});
+
+// NO MIDDLEWARE
+// app.get('/users/me', (req, res) => {
+//     var token = req.header('x-auth');
+
+//     User.findByToken(token).then((user) => {
+//         console.log(user);
+//         if (!user) {
+//             // instead of res.status(401).send()
+//             // move handling to catch
+//             return Promise.reject();
+//         }
+//         return res.send(user);
+//     }).catch((e) => {
+//         res.status(401).send();
+//     });
+// });
 
 app.listen(port, () => {
     console.log(`Started on port ${port}`);
