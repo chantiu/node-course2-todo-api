@@ -4,7 +4,6 @@ var authenticate = (req, res, next) => {
     var token = req.header('x-auth');
 
     User.findByToken(token).then((user) => {
-        console.log(user);
         if (!user) {
             // instead of res.status(401).send()
             // move handling to catch
