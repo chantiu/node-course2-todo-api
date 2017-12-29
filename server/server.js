@@ -112,6 +112,17 @@ app.get('/users/me', authenticate, (req, res) => {
     res.send(req.user);
 });
 
+app.post('/users/login', (req, res) => {
+    var body = _.pick(req.body, ['email', 'password']);
+    User.findByCredentials(body.email, body.password).then((user) => {
+        return user.generateAuthToken().then((token) => {
+            res.header('x-auth', token).send(user);
+        });
+    }).catch((err) => {
+        return res.status(400).send();
+    })
+});
+
 // NO MIDDLEWARE
 // app.get('/users/me', (req, res) => {
 //     var token = req.header('x-auth');
